@@ -29,3 +29,9 @@ This code snippet executes the following tasks:
 ```
 
 > :exclamation: It is important to note that the names of your form fields might differ. Ensure that the `$formObject` hashtable is appropriately adjusted to match your form fields.
+
+2. Receive a bearer token by making a POST request to: `https://login.microsoftonline.com/$AADTenantID/oauth2/token`, where `$AADTenantID` is the ID of your Azure Active Directory tenant.
+
+3. Looks up the user in Azure by its UPN, by making a GET request to  `https://graph.microsoft.com/v1.0/users/$($formObject.userPrincipalName)`.  This is done to get the Objectid of the user in Azure.
+
+4. For each group in the specified groups in  `GroupsToAdd` the user is added to the group. by making a POST request to  `https://graph.microsoft.com/v1.0/groups/<group.id>/members/$ref`

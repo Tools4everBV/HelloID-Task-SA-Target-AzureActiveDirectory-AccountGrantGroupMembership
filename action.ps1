@@ -7,7 +7,7 @@ $formObject = @{
 }
 
 try {
-    Write-Information "Executing AzureActiveDirectory action: [GrantMembership] for: [$($formObject.userPrincipalName)]"
+    Write-Information "Executing AzureActiveDirectory action: [AccountGrantGroupMembership] for: [$($formObject.userPrincipalName)]"
 
     # Action logic here
     Write-Information "Retrieving Microsoft Graph AccessToken for tenant: [$AADTenantID]"
@@ -38,7 +38,7 @@ try {
     $azureADUser = Invoke-RestMethod @splatCreateUserParams
 }
 catch {
-    Write-Error "Could not execute AzureActiveDirectory action [GrantMembership] for: [$($formObject.userPrincipalName)]. User not found in the directory. Error: [$($_.Exception.Message)], Details : [$($_.Exception.ErrorDetails)]"
+    Write-Error "Could not execute AzureActiveDirectory action [AccountGrantGroupMembership] for: [$($formObject.userPrincipalName)]. User not found in the directory. Error: [$($_.Exception.Message)], Details : [$($_.Exception.ErrorDetails)]"
     return
 }
 try {
@@ -60,12 +60,12 @@ try {
             }
 
             $null = Invoke-RestMethod @splatAddParams
-            $message = "AzureActiveDirectory action: [GrantMembership to group [$($group.Name)($($group.id))] ] for: [$($formObject.userPrincipalName)] executed successfully"
+            $message = "AzureActiveDirectory action: [AccountGrantGroupMembership to group [$($group.Name)($($group.id))] ] for: [$($formObject.userPrincipalName)] executed successfully"
             $auditLog = @{
                 Action            = 'GrantMembership'
                 System            = 'AzureActiveDirectory'
-                TargetIdentifier  = "GroupId [$($group.id)]"
-                TargetDisplayName = "User UPN [$formObject.userPrincipalName]"
+                TargetIdentifier  = "$($azureADUser.id)"
+                TargetDisplayName = "$($formObject.userPrincipalName)"
                 Message           = $message
                 IsError           = $false
             }
@@ -76,12 +76,12 @@ try {
             $ex = $_
             if (($ex.Exception.Response) -and ($Ex.Exception.Response.StatusCode -eq 400))  {
                 # 400 indicates already member
-                $message = "AzureActiveDirectory action: [GrantMembership to group [$($group.Name)($($group.id))] ] for: [$($formObject.userPrincipalName)] executed successfully"
+                $message = "AzureActiveDirectory action: [AccountGrantGroupMembership to group [$($group.Name)($($group.id))] ] for: [$($formObject.userPrincipalName)] executed successfully"
                 $auditLog = @{
                     Action            = 'GrantMembership'
                     System            = 'AzureActiveDirectory'
-                    TargetIdentifier  = "GroupId [$($group.id)]"
-                    TargetDisplayName = "User UPN [$formObject.userPrincipalName]"
+                    TargetIdentifier  = "$($azureADUser.id)"
+                    TargetDisplayName = "$($formObject.userPrincipalName)"
                     Message           = $message
                     IsError           = $false
                 }
@@ -90,12 +90,12 @@ try {
 
             }
             else {
-                $message = "Could not execute AzureActiveDirectory action:[GrantMembership to group [$($group.Name)($($group.id))] ] for: [$($formObject.userPrincipalName)], error: $($ex.Exception.Message), Details : [$($ex.ErrorDetails.message)]"
+                $message = "Could not execute AzureActiveDirectory action:[AccountGrantGroupMembership to group [$($group.Name)($($group.id))] ] for: [$($formObject.userPrincipalName)], error: $($ex.Exception.Message), Details : [$($ex.ErrorDetails.message)]"
                 $auditLog = @{
                     Action            = 'GrantMembership'
                     System            = 'AzureActiveDirectory'
-                    TargetIdentifier  = "GroupId [$($group.id)]"
-                    TargetDisplayName = $formObject.userPrincipalName
+                    TargetIdentifier  = "$($azureADUser.id)"
+                    TargetDisplayName = "$($formObject.userPrincipalName)"
                     Message           = $message
                     IsError           = $true
                 }
@@ -108,11 +108,11 @@ try {
 }
 catch {
     $ex = $_
-    $message = "Could not execute AzureActiveDirectory action: [GrantMembership] for: [$($formObject.userPrincipalName)], error: $($ex.Exception.Message) details : [$($ex.ErrorDetails.message)] "
+    $message = "Could not execute AzureActiveDirectory action: [AccountGrantGroupMembership] for: [$($formObject.userPrincipalName)], error: $($ex.Exception.Message) details : [$($ex.ErrorDetails.message)] "
     $auditLog = @{
         Action            = 'GrantMembership'
         System            = 'AzureActiveDirectory'
-        TargetIdentifier  = ''
+        TargetIdentifier  = "$($azureADUser.id)"
         TargetDisplayName = $formObject.userPrincipalName
         Message           = $message
         IsError           = $true
