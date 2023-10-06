@@ -13,14 +13,14 @@ This code snippet executes the following tasks:
 
 ```json
 {
-    "UserPrincipalName": "testuser@mydomain.local",
+    "UserIdentity": "testuser@mydomain.local",
     "GroupsToAdd": [
         {
-            "name": "testgroup1",
+            "Name": "testgroup1",
             "Id" : "599bba95-e5ac-45f9-a3a0-e6e2674bb7df"
         },
         {
-            "name": "testgroup2",
+            "Name": "testgroup2",
             "Id" : "938a3e5d-2093-4ed9-b6b9-777c144ad08d"
         }
     ]
@@ -29,6 +29,7 @@ This code snippet executes the following tasks:
 ```
 
 > :exclamation: It is important to note that the names of your form fields might differ. Ensure that the `$formObject` hashtable is appropriately adjusted to match your form fields.
+> [See the Microsoft Docs page](https://learn.microsoft.com/en-us/graph/api/group-post-members?view=graph-rest-1.0&tabs=http)
 
 2. Receive a bearer token by making a POST request to: `https://login.microsoftonline.com/$AADTenantID/oauth2/token`, where `$AADTenantID` is the ID of your Azure Active Directory tenant.
 
